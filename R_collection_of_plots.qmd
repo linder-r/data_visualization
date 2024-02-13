@@ -1,0 +1,130 @@
+---
+title: "Collection of plots"
+format: html
+editor: visual
+---
+
+This document contains a collection of plots created with R and the ggplot2 library. The data sets used for the plots are all built-in into R and can be loaded with the function `data()`.
+
+#### Loading libraries
+
+```{r}
+#| output: false 
+#| warning: false
+library(tidyverse)
+library(extrafont)
+```
+
+## Scatter plot - data set 'women'
+
+```{r}
+#| warning: false
+# Loading data set 'women'
+data(women)
+df_women <- women
+
+# Creating scatterplot
+df_women |> ggplot(aes(x = weight, y = height)) +
+  geom_point(color = "orangered", size = 2.5) +
+  geom_smooth(method = lm, se=FALSE) +
+  labs(title = "Average heights and weights for American women aged 30–39",
+        subtitle = str_wrap("Source: The World Almanac and Book of Facts, 1975. 
+        The figures represent weights in ordinary indoor clothing and shoes, and            heights with shoes", width = 80),
+        x = "Weight (lbs)", 
+        y = "Height (in)") +
+  theme_bw() + 
+  theme(text = element_text(family = "Noto Sans"),
+        plot.margin = margin(t = 10, b = 10, r = 15, l = 10),
+        axis.title = element_text(face = "italic"),
+        axis.title.x = element_text(margin = margin(t = 7)),
+        axis.title.y = element_text(margin = margin(r = 7)),
+        plot.title = element_text(face = "bold"),
+        plot.subtitle = element_text(face = "italic", 
+                                     margin = margin(t = 2, b = 10 )))
+```
+
+## Scatter plot - data set 'trees'
+
+```{r}
+# Load data set 'trees'
+data(trees)
+df_trees <- trees
+
+# Creating scatter plot
+df_trees |> 
+  mutate(volume_category = case_when(Volume <= 25 ~ "Up to 25", 
+                                     Volume >= 25 & Volume <= 50 ~ "Up to 50",
+                                     TRUE ~ "Over 50")) |> 
+  ggplot(aes(x = Height, y = Girth)) +
+  geom_point(aes(color = volume_category), size = 2.5, alpha = 1) +
+  theme_minimal() +
+  labs(title = str_wrap("Height, girth and volume of timber
+                        in 31 felled black cherry trees", width = 70),
+       subtitle = str_wrap("Source: Ryan, T. A., Joiner, B. L. and Ryan, B. F. (1976) The Minitab Student Handbook. Duxbury Press.",width = 90),
+       x = "Height in feet",
+       y = "Girth in inches",
+       color = "Volume in\ncubic feet") +
+  theme(text = element_text(family = "Bahnschrift"),
+        plot.title = element_text(face = "bold"),
+        plot.subtitle = element_text(size = 10, face = "italic")) + 
+  scale_color_discrete(breaks=c("Over 50", "Up to 50", "Up to 25"))
+```
+
+## Violin plot - data set 'OrchardSprays'
+
+```{r}
+# Loading data set 'OrchardSprays'
+data(OrchardSprays)
+df_orchard_sprays <- OrchardSprays
+
+# Creating box plot
+df_orchard_sprays |> 
+  ggplot(aes(x = treatment, y = decrease, fill = treatment)) +
+  geom_violin() +
+  theme_classic() +
+  labs(title = str_wrap("Potency of orchard sprays in repelling honeybees",width = 60),
+       subtitle = str_wrap("Cells of dry comb were filled with seven different solutions containing different concentrations of lime sulphur. The cells were exposed to 100 bees. After two hours the decrease of the lime sulphur solutions in the cells was measured. The higher the decrease, the weaker the repelling effect.", width = 85),
+       x = "Concentrations levels of lime sulphur from highest (A) to lowest (H)",
+       y = "Decrease of lime sulphur solution") +
+  theme(text = element_text(family = "Cambria"),
+        plot.margin = margin(t = 15, b = 15, r = 15, l = 15),
+        plot.background = element_rect(fill = "beige"),
+        panel.background = element_rect(fill = "beige"),
+        plot.title = element_text(face = 2, size = 16),
+        plot.subtitle = element_text(size = 11, face = 3),
+        axis.title = element_text(face = 3),
+        legend.position = "none")
+
+```
+
+## Box plot - data set 'sleep'
+
+```{r}
+# Loading data set 'sleep'
+data(sleep)
+df_sleep <- sleep
+
+# Creating box plot
+df_sleep |> 
+  mutate(group_nr = case_when(group == 1 ~ "Group 1",
+                              TRUE ~ "Group 2")) |> 
+  ggplot(aes(x = group_nr, y = extra, fill = group_nr)) +
+  geom_boxplot() +
+  labs(title = "Student's sleep data",
+       subtitle = "The effect of two soporific drugs on student's hours of sleep",
+       y = "Increase in hours of sleep") +
+  theme(text = element_text(family = "Liberation Mono"),
+    legend.position = "none",
+    plot.background = element_rect(fill = "lightsteelblue1"),
+    panel.background = element_rect(fill = "lightsteelblue1"),
+    panel.grid.major = element_line(color = "black", linewidth = 0.3),
+    panel.grid.minor = element_line(color = "black", linewidth = 0.3),
+    panel.grid.major.x = element_blank(),
+    plot.title = element_text(size = 18, face = "bold"),
+    axis.title.x = element_blank(),
+    plot.margin = margin(t = 15, b= 15, r = 15, l = 15),
+    axis.title.y = element_text(size = 12, margin = margin(r = 10)),
+    axis.text.x = element_text(size = 12),
+    plot.subtitle = element_text(size = 12, margin = margin(t = 2, b = 5)),
+    axis.ticks = element_blank())
+```
